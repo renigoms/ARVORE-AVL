@@ -9,8 +9,8 @@ class _No:
         self.valor = valor
         self.esquerda = None
         self.direita = None
-        self.altura = None  # tem que fazer uma função para saber a altura
-        # obs: estudar altura da arvore
+        self.altura = None
+
 
     # str do nó
     def __str__(self):
@@ -60,7 +60,7 @@ class ArvoreBinaria:
     # ALTURA DA AVL
     def _get_altura(self, raiz):
         if not raiz:
-            return 0
+            return -1
         else:
             if self._get_altura(raiz.esquerda) > self._get_altura(raiz.direita):
                 return self._get_altura(raiz.esquerda) + 1
@@ -111,14 +111,29 @@ class ArvoreBinaria:
 
     def remover(self, valor):  # A FUNÇÃO REMOVER NÃO ESTÁ PRONTA PESQUISAR COMO TERMINÁ-LA
         # TEM QUE FAZER ISSO AQUI ATE 04/10
-        # o nó a ser removido é um nó folha CONCLUIDO
-        # o nó a ser removido possui somente um filho É O QUE FALTA
-        # o nó a ser removido possui dois filhos CONCLUIDO
         perc, anterior = self._get_perc(self.raiz, valor)
         if not perc:
             raise Exception('ESSE VALOR NÃO EXISTE')
         #   ESSA PARTE REMOVE AS FOLHAS
-        if perc.is_folha():
+        if perc.valor == self.raiz.valor:
+            if perc.direita is None and perc.esquerda is None:
+                perc.valor = None
+            else:
+                sucessor = self._get_sucessor(perc)
+                predecessor = self._get_predecessor(perc)
+                if sucessor:
+                    self.raiz = perc.direita
+                    sucessor.esquerda = perc.esquerda
+                    perc.direita = None
+                    perc.esquerda = None
+
+                elif predecessor:
+                    self.raiz = perc.esquerda
+                    predecessor.direita = perc.direita
+                    perc.direita = None
+                    perc.esquerda = None
+
+        elif perc.is_folha():
             if perc.valor > anterior.valor:
                 anterior.direita = None
             else:
@@ -132,33 +147,23 @@ class ArvoreBinaria:
                     sucessor.esquerda = perc.esquerda
                     perc.direita = None
                     perc.esquerda = None
-                    print('entrou linha 138')
                 elif perc == anterior.esquerda:
                     anterior.esquerda = perc.direita
                     sucessor.esquerda = perc.esquerda
                     perc.direita = None
                     perc.esquerda = None
-                    print('entrou linha 141')
-
-            elif predecessor: #  é o maior valor menor que chave[x]
+            elif not sucessor and predecessor: #  é o maior valor menor que chave[x]
                 if perc == anterior.esquerda:
                     anterior.esquerda = perc.esquerda
                     predecessor.direita = perc.direita
                     perc.esquerda = None
                     perc.direita = None
-                    print('entrou linha 140')
                 elif perc == anterior.direita:
                     anterior.direita = perc.esquerda
                     predecessor.direita = perc.direita
                     perc.esquerda = None
                     perc.direita = None
-                    print('entrou linha 151')
-            if not sucessor and predecessor:  # FALTA TERMINAR ISSO DAI
-                # TEM QUE FAZER ISSO AQUI ATE 04/10
-                # ACREDITO QUE SEJA PARA REMOVER A RAIZ
-                pass
         self.total -= 1
-
         self.raiz.altura = self._get_altura(self.raiz)
     # FUNÇÕES QUE EU TENHO QUE FAZER
 
@@ -276,6 +281,7 @@ class ArvoreBinaria:
 
 
 arvore = ArvoreBinaria()
+
 lista = []
 lista2 = []
 for i in range(1,50,12):
@@ -292,27 +298,23 @@ arvore.add(810)
 arvore.add(70)
 arvore.add(680)
 arvore.add(66)
-arvore.remover(80)
-arvore.remover(870)
-arvore.remover(810)
-arvore.remover(70)
-arvore.remover(680)
-arvore.remover(66)
-arvore.remover(1)
-arvore.remover(13)
-arvore.remover(41)
-arvore.remover(32)
-arvore.remover(23)
-arvore.remover(14)
-arvore.remover(5)
-arvore.remover(25)
-arvore.remover(37)
-arvore.remover(49)
-arvore.add(51)
-arvore.add(49)
-arvore.remover(49)
-arvore.remover(51)
-
+# arvore.remover(50)
+# arvore.remover(41)
+# arvore.remover(32)
+# arvore.remover(23)
+# arvore.remover(14)
+# arvore.remover(5)
+# arvore.remover(1)
+# arvore.remover(13)
+# arvore.remover(25)
+# arvore.remover(37)
+# arvore.remover(49)
+# arvore.remover(80)
+# arvore.remover(70)
+# arvore.remover(66)
+# arvore.remover(870)
+# arvore.remover(810)
+# arvore.remover(680)
 print(arvore.total)
 print(arvore.raiz.altura)
 arvore.print()
