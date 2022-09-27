@@ -101,7 +101,7 @@ class ListEncadSimples:
             return self.final.valor
         else:
             perc = self.inicio
-            for i in range(index-1):
+            for i in range(index):
                 if not perc.proximo:
                     return
                 else:

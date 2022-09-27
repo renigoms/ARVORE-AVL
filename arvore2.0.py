@@ -11,7 +11,6 @@ class _No:
         self.direita = None
         self.altura = None
 
-
     # str do nó
     def __str__(self):
         return f'{self.valor}'
@@ -60,7 +59,7 @@ class ArvoreBinaria:
     # ALTURA DA AVL
     def _get_altura(self, raiz):
         if not raiz:
-            return -1
+            return 0
         else:
             if self._get_altura(raiz.esquerda) > self._get_altura(raiz.direita):
                 return self._get_altura(raiz.esquerda) + 1
@@ -141,7 +140,7 @@ class ArvoreBinaria:
         else:
             sucessor = self._get_sucessor(perc)
             predecessor = self._get_predecessor(perc)
-            if sucessor:# menor valor maior que chave[x]
+            if sucessor:  # menor valor maior que chave[x]
                 if perc == anterior.direita:
                     anterior.direita = perc.direita
                     sucessor.esquerda = perc.esquerda
@@ -152,7 +151,7 @@ class ArvoreBinaria:
                     sucessor.esquerda = perc.esquerda
                     perc.direita = None
                     perc.esquerda = None
-            elif not sucessor and predecessor: #  é o maior valor menor que chave[x]
+            elif not sucessor and predecessor:  # é o maior valor menor que chave[x]
                 if perc == anterior.esquerda:
                     anterior.esquerda = perc.esquerda
                     predecessor.direita = perc.direita
@@ -165,6 +164,7 @@ class ArvoreBinaria:
                     perc.direita = None
         self.total -= 1
         self.raiz.altura = self._get_altura(self.raiz)
+
     # FUNÇÕES QUE EU TENHO QUE FAZER
 
     def get_lista(self, perc, lista, ordem='pre'):  # TEM QUE FAZER ISSO AQUI ATE 04/10
@@ -182,12 +182,12 @@ class ArvoreBinaria:
 
         return lista
 
-    def cereate_arvore_to_lista(self, lista):  # TEM QUE FAZER ISSO AQUI ATE 04/10
-        for i in lista:
+    def create_arvore_to_lista(self, lista):  # TEM QUE FAZER ISSO AQUI ATE 04/10
+        for i in range(len(lista)):
             if i is None:
                 return
             else:
-                self.add(i)
+                self.add(lista[i])
 
     # FATOR DE BALANCEAMENTO
 
@@ -201,61 +201,58 @@ class ArvoreBinaria:
         else:
             return self._get_raiz(perc.esquerda, valor)
 
-    def fator_balanceamento(self, valor):
+    def _fator_balanceamento(self, valor):
         perc = self._get_raiz(self.raiz, valor)
-        return self._get_altura(perc.esquerda) - self._get_altura(perc.direita)
+        if not perc:
+            return -1
+        else:
+            return self._get_altura(perc.esquerda) - self._get_altura(perc.direita)
 
     # rotação
 
     def _rotacao_direita(self, raiz):  # falta terminar
+        perc = raiz.esquerda
+        raiz.esquerda = perc.direita
+        perc.direita = raiz
+        self.raiz.altura = self._get_altura(self.raiz)
 
-        apont = raiz
-        apont2 = apont.esquerda
-        apont3 = apont2.direita
-        apont2.direita = apont
-        apont.esquerda = apont3
-        apont2.altura = self._get_altura(self.raiz)
-        apont.altura = self._get_altura(self.raiz)
-        return apont2
 
     def _rotacao_esquerda(self, raiz):  # falta terminar
-        apont = raiz
-        apont2 = apont.direita
-        apont3 = apont2.esquerda
-        apont3.esquerda = apont
-        apont.direita = apont3
-        apont2.altura = self._get_altura(self.raiz)
-        apont.altura = self._get_altura(self.raiz)
-        return apont2
+        perc = raiz.direita
+        raiz.direita = perc.esquerda
+        perc.esquerda = raiz
+        self.raiz.altura = self._get_altura(self.raiz)
+
 
     def _rotacao_direita_esquerda(self, raiz):  # falta terminar
-        raiz.direita = self._rotacao_direita(raiz.direita)
-        return self._rotacao_esquerda(raiz)
+        self._rotacao_direita(raiz.direita)
+        self._rotacao_esquerda(raiz)
 
     def _rotacao_esquerda_direita(self, raiz):
-        raiz.esquerda = self._rotacao_esquerda(raiz.esquerda)
-        return self._rotacao_direita(raiz)
+        self._rotacao_esquerda(raiz.esquerda)
+        self._rotacao_direita(raiz)
 
     # BALANCEAMENTO
+
     def _get_balancear(self, raiz):
         if not raiz:
             return
         else:
-            # ROTAÇÃO À ESQUERDA
-            if self.fator_balanceamento(raiz.valor) < -1 and self.fator_balanceamento(raiz.direita.valor) <= 0:
-                raiz = self._rotacao_esquerda(raiz)
-            # ROTAÇÃO À DIREITA
-            elif self.fator_balanceamento(raiz.valor) < -1 and self.fator_balanceamento(raiz.esquerda.valor) >= 0:
-                print('ok2linha202', raiz.valor)
-                raiz = self._rotacao_direita(raiz)
-            # ROTAÇÃO DUPLA/ESQUERDA
-            elif self.fator_balanceamento(raiz.valor) > 1 and self.fator_balanceamento(raiz.esquerda.valor) < 0:
-                raiz = self._rotacao_esquerda_direita(raiz)
-            # ROTAÇÃO DUPLA/DIREITA
-            elif self.fator_balanceamento(raiz.valor) < -1 and self.fator_balanceamento(raiz.direita.valor) > 0:
-                raiz = self._rotacao_direita_esquerda(raiz)
+
             self._get_balancear(raiz.esquerda)
             self._get_balancear(raiz.direita)
+            if self._fator_balanceamento(raiz.valor) > 1:
+                if self._fator_balanceamento(raiz.esquerda.valor) >= 0:
+                    self._rotacao_direita(raiz)
+                else:
+                    self._rotacao_esquerda_direita(raiz)
+
+            if self._fator_balanceamento(raiz.valor) < -1:
+                if self._fator_balanceamento(raiz.direita.valor) <= 0:
+                    self._rotacao_esquerda(raiz)
+                else:
+                    self._rotacao_direita_esquerda(raiz)
+
 
     def balancear(self):
         return self._get_balancear(self.raiz)
@@ -276,45 +273,16 @@ class ArvoreBinaria:
     def print(self):
         self.printHelper(self.raiz, '', True)
 
-    def teste(self):
-        return self._get_predecessor(self.raiz)
-
 
 arvore = ArvoreBinaria()
-
-lista = []
-lista2 = []
-for i in range(1,50,12):
-    lista.append(i)
-for i in range(50,1,-9):
-    lista2.append(i)
-print(lista2)
-lista2.extend(lista)
-print(lista2)
-arvore.cereate_arvore_to_lista(lista2)
-arvore.add(80)
-arvore.add(870)
-arvore.add(810)
-arvore.add(70)
-arvore.add(680)
-arvore.add(66)
-# arvore.remover(50)
-# arvore.remover(41)
-# arvore.remover(32)
-# arvore.remover(23)
-# arvore.remover(14)
-# arvore.remover(5)
-# arvore.remover(1)
-# arvore.remover(13)
-# arvore.remover(25)
-# arvore.remover(37)
-# arvore.remover(49)
-# arvore.remover(80)
-# arvore.remover(70)
-# arvore.remover(66)
-# arvore.remover(870)
-# arvore.remover(810)
-# arvore.remover(680)
-print(arvore.total)
-print(arvore.raiz.altura)
+arvore.add(4)
+arvore.add(3)
+arvore.add(2)
+arvore.add(1)
+arvore.add(8)
+arvore.add(14)
+arvore.add(21)
+arvore.add(11)
+arvore.add(12)
+arvore.balancear()
 arvore.print()
