@@ -215,14 +215,14 @@ class ArvoreBinaria:
         raiz.esquerda = perc.direita
         perc.direita = raiz
         self.raiz.altura = self._get_altura(self.raiz)
-
+        return perc
 
     def _rotacao_esquerda(self, raiz):  # falta terminar
         perc = raiz.direita
         raiz.direita = perc.esquerda
         perc.esquerda = raiz
         self.raiz.altura = self._get_altura(self.raiz)
-
+        return perc
 
     def _rotacao_direita_esquerda(self, raiz):  # falta terminar
         self._rotacao_direita(raiz.direita)
