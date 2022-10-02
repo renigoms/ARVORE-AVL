@@ -210,18 +210,34 @@ class ArvoreBinaria:
 
     # rotação
 
-    def _rotacao_direita(self, raiz):  # falta terminar
+    def _rotacao_direita(self, raiz, raiz_anterior=None):
+        pai = raiz_anterior
         perc = raiz.esquerda
-        raiz.esquerda = perc.direita
+        if not perc.direita is None:
+            raiz.esquerda = perc.direita
+        if pai is None:
+            self.raiz = perc
+        elif pai.direita == raiz:
+            pai.direita = perc
+        else:
+            pai.esquerda = perc
+        raiz.esquerda = None
         perc.direita = raiz
-        self.raiz.altura = self._get_altura(self.raiz)
         return perc
 
-    def _rotacao_esquerda(self, raiz):  # falta terminar
+    def _rotacao_esquerda(self, raiz, anterior_raiz=None):
         perc = raiz.direita
-        raiz.direita = perc.esquerda
+        pai = anterior_raiz
+        if not raiz.esquerda is None:
+            raiz.esquerda = perc.esquerda
+        if pai is None:
+            self.raiz = perc
+        elif pai.direita == raiz:
+            pai.esquerda = perc
+        else:
+            pai.direita = perc
+        raiz.direita = None
         perc.esquerda = raiz
-        self.raiz.altura = self._get_altura(self.raiz)
         return perc
 
     def _rotacao_direita_esquerda(self, raiz):  # falta terminar
@@ -234,25 +250,27 @@ class ArvoreBinaria:
 
     # BALANCEAMENTO
 
-    def _get_balancear(self, raiz):
+    def _get_balancear(self, raiz, raiz_anterior=None):
         if not raiz:
             return
         else:
 
-            self._get_balancear(raiz.esquerda)
-            self._get_balancear(raiz.direita)
             if self._fator_balanceamento(raiz.valor) > 1:
-                if self._fator_balanceamento(raiz.esquerda.valor) >= 0:
-                    self._rotacao_direita(raiz)
+                if self._fator_balanceamento(raiz.esquerda.valor) > 0:
+                    self._rotacao_direita(raiz, raiz_anterior)
                 else:
                     self._rotacao_esquerda_direita(raiz)
 
             if self._fator_balanceamento(raiz.valor) < -1:
-                if self._fator_balanceamento(raiz.direita.valor) <= 0:
-                    self._rotacao_esquerda(raiz)
+                if self._fator_balanceamento(raiz.direita.valor) < 0:
+                    self._rotacao_esquerda(raiz, raiz_anterior)
                 else:
                     self._rotacao_direita_esquerda(raiz)
 
+            if raiz.esquerda:
+                self._get_balancear(raiz.esquerda, raiz)
+            if raiz.direita:
+                self._get_balancear(raiz.direita, raiz)
 
     def balancear(self):
         return self._get_balancear(self.raiz)
@@ -275,14 +293,11 @@ class ArvoreBinaria:
 
 
 arvore = ArvoreBinaria()
+
 arvore.add(4)
 arvore.add(3)
 arvore.add(2)
 arvore.add(1)
-arvore.add(8)
-arvore.add(14)
-arvore.add(21)
-arvore.add(11)
-arvore.add(12)
+arvore.print()
 arvore.balancear()
 arvore.print()
