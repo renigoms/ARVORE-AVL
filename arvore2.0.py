@@ -26,6 +26,7 @@ class ArvoreBinaria:
         self.raiz = None
         self.total = 0
 
+    # FUNÇÕES PARA ADICIONAR
     def _add(self, no_raiz, no):
         # função privada que faz o trabalho de adicionar
         if not no_raiz:
@@ -108,8 +109,7 @@ class ArvoreBinaria:
         perc = self._maximo(perc.esquerda)
         return perc
 
-    def remover(self, valor):  # A FUNÇÃO REMOVER NÃO ESTÁ PRONTA PESQUISAR COMO TERMINÁ-LA
-        # TEM QUE FAZER ISSO AQUI ATE 04/10
+    def remover(self, valor):
         perc, anterior = self._get_perc(self.raiz, valor)
         if not perc:
             raise Exception('ESSE VALOR NÃO EXISTE')
@@ -165,8 +165,7 @@ class ArvoreBinaria:
         self.total -= 1
         self.raiz.altura = self._get_altura(self.raiz)
 
-    # FUNÇÕES QUE EU TENHO QUE FAZER
-
+    # TRANSFORMAR A ARVORE EM LISTA
     def get_lista(self, perc, lista, ordem='pre'):  # TEM QUE FAZER ISSO AQUI ATE 04/10
         if not perc:
             return
@@ -182,6 +181,7 @@ class ArvoreBinaria:
 
         return lista
 
+    # TRANSFORMAR A LISTA EM ÁRVORE
     def create_arvore_to_lista(self, lista):  # TEM QUE FAZER ISSO AQUI ATE 04/10
         for i in range(len(lista)):
             if i is None:
@@ -191,24 +191,14 @@ class ArvoreBinaria:
 
     # FATOR DE BALANCEAMENTO
 
-    def _get_raiz(self, perc, valor):
-        if not perc:
-            return
-        elif perc.valor == valor:
-            return perc
-        elif valor > perc.valor:
-            return self._get_raiz(perc.direita, valor)
-        else:
-            return self._get_raiz(perc.esquerda, valor)
-
     def _fator_balanceamento(self, valor):
-        perc = self._get_raiz(self.raiz, valor)
+        perc = self.get(valor)
         if not perc:
-            return -1
+            return 0
         else:
             return self._get_altura(perc.esquerda) - self._get_altura(perc.direita)
 
-    # rotação
+    # ROTAÇÕES
 
     def _rotacao_direita(self, raiz, raiz_anterior):
         pai = raiz_anterior
@@ -245,7 +235,7 @@ class ArvoreBinaria:
         perc.esquerda = raiz
         return perc
 
-    def _rotacao_direita_esquerda(self, raiz, raiz_anterior):  # falta terminar
+    def _rotacao_direita_esquerda(self, raiz, raiz_anterior):
         raiz.direita = self._rotacao_direita(raiz.direita, raiz_anterior)
         return self._rotacao_esquerda(raiz, raiz_anterior)
 
@@ -280,9 +270,11 @@ class ArvoreBinaria:
         if fb < -1 or fb > 1:
             self.balancear()
 
+    # MÉTODO PARA CHAMAR O BALANCEAR
     def balancear(self):
         return self._get_balancear(self.raiz)
 
+    # FUNÇÕES PRINT
     def printHelper(self, currPtr, indent, last):
         if currPtr is not None:
             sys.stdout.write(indent)
@@ -300,19 +292,42 @@ class ArvoreBinaria:
         self.printHelper(self.raiz, '', True)
 
 
-lista1 = []
-lista2 = []
-for i in range(1,10+1):
-    lista1.append(i)
-
-for i in range(20, 11-1, -1):
-    lista2.append(i)
-
+lista = ListEncadSimples()
+lista2 = ListEncadSimples()
+lista3 = ListEncadSimples()
+for i in range(1, 100, 6):
+    lista.adicionaritens(i)
 arvore = ArvoreBinaria()
-arvore.create_arvore_to_lista(lista1)
+arvore.create_arvore_to_lista(lista)
 arvore.print()
-arvore.create_arvore_to_lista(lista2)
+arvore.get_lista(arvore.raiz, lista2, 'pos')
+print(lista2)
+arvore.ordem(arvore.raiz)
+print('@!!@@!')
+arvore.ordem(arvore.raiz, 'in')
+print('@!!@@!')
+arvore.ordem(arvore.raiz, 'pos')
+print('@!!@@!')
+print(arvore.get(19))
+print('=--=--=-')
+print(arvore.maximo())
+print('=--=--=-')
+print(arvore.minimo())
+print('=--=--=-')
+arvore.balancear()
+arvore.print()
+arvore.remover(85)
+arvore.remover(55)
+arvore.remover(31)
+arvore.print()
+arvore.balancear()
+arvore.add(9)
+arvore.add(77)
+arvore.add(81)
 arvore.print()
 arvore.balancear()
 arvore.print()
-
+arvore.get_lista(arvore.raiz, lista3)
+for i in range(len(lista3)):
+    arvore.remover(lista3[i])
+arvore.print()
