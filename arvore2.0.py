@@ -210,48 +210,48 @@ class ArvoreBinaria:
 
     # rotação
 
-    def _rotacao_direita(self, raiz, raiz_anterior):  # falta terminar
+    def _rotacao_direita(self, raiz, raiz_anterior):
         pai = raiz_anterior
         no = raiz
         perc = no.esquerda
-        if perc.direita:
+        if perc and perc.direita:
             no.esquerda = perc.direita
+        else:
+            no.esquerda = None
         if pai is None:
             self.raiz = perc
-        elif pai.direita == no:
-            pai.direita = perc
-        else:
+        elif pai.esquerda == raiz:
             pai.esquerda = perc
-        no.esquerda = None
+        elif pai.direita == raiz:
+            pai.direita = perc
         perc.direita = raiz
         return perc
 
-    def _rotacao_esquerda(self, raiz, anterior_raiz):  # falta terminar
+    def _rotacao_esquerda(self, raiz, anterior_raiz):
         no2 = raiz
         perc = no2.direita
-
         pai = anterior_raiz
-        if perc.esquerda:
-            no2.esquerda = perc.esquerda
+        if perc and perc.esquerda:
+            no2.direita = perc.esquerda
+        else:
+            no2.direita = None
         if pai is None:
             self.raiz = perc
-        elif pai.direita == no2:
+        elif pai.esquerda == raiz:
             pai.esquerda = perc
-        else:
+        elif pai.direita == raiz:
             pai.direita = perc
-        no2.direita = None
+
         perc.esquerda = raiz
-        return no2
+        return perc
 
     def _rotacao_direita_esquerda(self, raiz, raiz_anterior):  # falta terminar
-        print('entrou aqui 224')
-        self._rotacao_direita(raiz.direita, raiz_anterior)
-        self._rotacao_esquerda(raiz, raiz_anterior)
+        raiz.direita = self._rotacao_direita(raiz.direita, raiz_anterior)
+        return self._rotacao_esquerda(raiz, raiz_anterior)
 
     def _rotacao_esquerda_direita(self, raiz, raiz_anterior):
-        print('entrou 249')
-        self._rotacao_esquerda(raiz.esquerda, raiz_anterior)
-        self._rotacao_direita(raiz, raiz_anterior)
+        raiz.esquerda = self._rotacao_esquerda(raiz.esquerda, raiz_anterior)
+        return self._rotacao_direita(raiz, raiz_anterior)
 
     # BALANCEAMENTO
 
@@ -260,20 +260,25 @@ class ArvoreBinaria:
             raiz = self.raiz
 
         if self._fator_balanceamento(raiz.valor) > 1:
-            if self._fator_balanceamento(raiz.esquerda.valor) > 0:
-                raiz = self._rotacao_direita(raiz, raiz_anterior)
+            if self._fator_balanceamento(raiz.esquerda.valor) == -1:
+                raiz = self._rotacao_esquerda_direita(raiz, raiz_anterior)
             else:
-                self._rotacao_esquerda_direita(raiz, raiz_anterior)
+                raiz = self._rotacao_direita(raiz, raiz_anterior)
 
         if self._fator_balanceamento(raiz.valor) < -1:
-            if self._fator_balanceamento(raiz.direita.valor) < 0:
-                self._rotacao_esquerda(raiz, raiz_anterior)
+            if self._fator_balanceamento(raiz.direita.valor) == 1:
+                raiz = self._rotacao_direita_esquerda(raiz, raiz_anterior)
             else:
-                self._rotacao_direita_esquerda(raiz, raiz_anterior)
+                raiz = self._rotacao_esquerda(raiz, raiz_anterior)
+
         if raiz.esquerda:
             self._get_balancear(raiz.esquerda, raiz)
         if raiz.direita:
             self._get_balancear(raiz.direita, raiz)
+        # REBALANCEAMENTO
+        fb = self._fator_balanceamento(self.raiz.valor)
+        if fb < -1 or fb > 1:
+            self.balancear()
 
     def balancear(self):
         return self._get_balancear(self.raiz)
@@ -295,18 +300,19 @@ class ArvoreBinaria:
         self.printHelper(self.raiz, '', True)
 
 
-arvore = ArvoreBinaria()
-arvore.add(3)
-arvore.add(1)
-arvore.add(2)
-# arvore.add(17)
-# arvore.add(16)
-# arvore.add(15)
-# arvore.add(14)
-#
-# arvore.add(13)
-# arvore.add(23)
+lista1 = []
+lista2 = []
+for i in range(1,10+1):
+    lista1.append(i)
 
+for i in range(20, 11-1, -1):
+    lista2.append(i)
+
+arvore = ArvoreBinaria()
+arvore.create_arvore_to_lista(lista1)
+arvore.print()
+arvore.create_arvore_to_lista(lista2)
 arvore.print()
 arvore.balancear()
 arvore.print()
+
